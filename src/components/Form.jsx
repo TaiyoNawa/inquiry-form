@@ -6,37 +6,26 @@ import {
 	Textarea,
 	SendMessageIcon,
 } from 'evergreen-ui';
-import { useState, useMemo } from 'react';
-import { AxiosNotionRepository } from '../repositories/AxiosNotionRepository';
+import { useState } from 'react';
+import { postContact } from '../repositories/AxiosNotionRepository';
 
 export const Form = () => {
 	const [name, setName] = useState();
 	const [email, setEmail] = useState();
 	const [content, setContent] = useState();
-	const repository = useMemo(() => new AxiosNotionRepository().repository, []);
 
-	onsubmit = async (e) => {
+	const onsubmit = async (e) => {
 		e.preventDefault();
 		try {
-			const repo = new AxiosNotionRepository().repository;
-			const res = await repo.post('/', {
-				data: {
-					parent: { database_id: '27291510610c417884ef1c55084c7085' },
-					properties: {
-						name: {
-							title: [{ text: { content: 'Tuscan Kale' } }],
-							email: [{ email: { content: 'test@test.com' } }],
-							content: [{ text: { content: 'test' } }],
-						},
-					},
-				},
+			const { data } = await postContact({
+				name,
+				email,
+				content,
 			});
-			console.log(res);
+			console.log(data);
 		} catch (error) {
 			console.error(error);
 		}
-
-		// await repository.sendContent();
 	};
 
 	return (
@@ -53,7 +42,7 @@ export const Form = () => {
 		>
 			<h1>Form Sample</h1>
 			<Pane textAlign='left'>
-				<form onSubmit={repository}>
+				<form>
 					<TextInputField
 						required
 						width='100%'
@@ -81,9 +70,10 @@ export const Form = () => {
 						/>
 					</Pane>
 					<Button
-						type='submit'
+						type='click'
 						marginTop={32}
 						size='large'
+						onClick={onsubmit}
 						iconBefore={SendMessageIcon}
 					>
 						送信
