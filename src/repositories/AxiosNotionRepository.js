@@ -1,3 +1,5 @@
+//postContact関数の定義
+//データをlocalhost:3001にポスト？
 import axios from 'axios';
 
 export const postContact = ({ email, name, content }) => {
